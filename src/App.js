@@ -17,7 +17,7 @@ import { selectCurrentUser } from './redux/user/user.selectors';
 
 import { setCurrentUser } from './redux/user/user.actions';
 
-import './App.css';
+import {GlobalStyle} from './app.styles';
 
 
 class App extends Component {
@@ -48,6 +48,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <GlobalStyle/>
         <Header/>
         <Switch>
           <Route exact path='/' component={HomePage}/>
