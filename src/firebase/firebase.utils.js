@@ -3,6 +3,9 @@ import { getFirestore, doc, getDoc, setDoc} from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
 
 
+import {collection, writeBatch} from 'firebase/firestore';
+
+
 const firebaseConfig = {
     apiKey: "AIzaSyC6fK-8P0t_LHGVIHlfj9oirU3RsnUiMVc",
     authDomain: "crwn-7d6eb.firebaseapp.com",
@@ -25,10 +28,36 @@ provider.setCustomParameters({
 
 export const signInWithGoogle = () => signInWithPopup(auth, provider);
 
+
+
+// --------------------------------------------------------------------------
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+    const collectionRef = collection(db, collectionKey);
+    const batch = writeBatch(db);
+
+    objectsToAdd.forEach(obj => {
+        const newDocRef = doc(collectionRef);
+        batch.set(newDocRef, obj);
+    });
+
+    return await batch.commit();
+}
+
+// addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({title,items})));
+
+
+
+// const collectionRef = collection(db, 'users');
+// const snapshot = getDocs(collectionRef)
+// .then(res => console.log(res));
+// --------------------------------------------------------------------------
+
+
 export const createUserProfileDocument = async (userAuth, additionalData) => {
     if (!userAuth) return;
 
     const userRef = doc(db, 'users', userAuth.uid);
+
     const snapShot = await getDoc(userRef);
 
     if (!snapShot.exists()) {
@@ -48,4 +77,22 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
     }
 
     return userRef;
+};
+
+export const convertCollectionsShapshotToMap = (collections) => {
+    const transformedCollection = collections.docs.map(doc => {
+        const {title, items} = doc.data();
+
+        return {
+            routeName: encodeURI(title.toLowerCase()),
+            id: doc.id,
+            title,
+            items
+        }
+    });
+
+    return transformedCollection.reduce((accumulator, collection) => {
+        accumulator[collection.title.toLowerCase()] = collection;
+        return accumulator;
+    }, {});
 };
