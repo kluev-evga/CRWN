@@ -1,9 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc, setDoc} from 'firebase/firestore';
-import { getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
-
-
-import {collection, writeBatch} from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup} from 'firebase/auth';
 
 
 const firebaseConfig = {
@@ -20,32 +17,28 @@ initializeApp(firebaseConfig);
 export const db = getFirestore();
 export const auth = getAuth();
 
-export const provider = new GoogleAuthProvider();
-
-provider.setCustomParameters({
-    prompt : 'select_account'
-});
-
-export const signInWithGoogle = () => signInWithPopup(auth, provider);
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({prompt : 'select_account'});
+export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
 
 
 
 // --------------------------------------------------------------------------
-export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
-    const collectionRef = collection(db, collectionKey);
-    const batch = writeBatch(db);
+// import {collection, writeBatch} from 'firebase/firestore';
 
-    objectsToAdd.forEach(obj => {
-        const newDocRef = doc(collectionRef);
-        batch.set(newDocRef, obj);
-    });
+// export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+//     const collectionRef = collection(db, collectionKey);
+//     const batch = writeBatch(db);
 
-    return await batch.commit();
-}
+//     objectsToAdd.forEach(obj => {
+//         const newDocRef = doc(collectionRef);
+//         batch.set(newDocRef, obj);
+//     });
+
+//     return await batch.commit();
+// }
 
 // addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({title,items})));
-
-
 
 // const collectionRef = collection(db, 'users');
 // const snapshot = getDocs(collectionRef)
@@ -95,4 +88,13 @@ export const convertCollectionsShapshotToMap = (collections) => {
         accumulator[collection.title.toLowerCase()] = collection;
         return accumulator;
     }, {});
+};
+
+export const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        const unsubscribe =  onAuthStateChanged(auth, userAuth => {
+            unsubscribe();
+            resolve(userAuth);
+        }, reject)
+    });
 };

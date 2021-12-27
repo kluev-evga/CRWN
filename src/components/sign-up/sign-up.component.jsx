@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
-import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { signUpStart } from '../../redux/user/user.actions';
 import { SignUpContainer } from './sign-up.styles';
 
 
@@ -17,16 +17,11 @@ class SignIn extends Component {
     handleSubmit = async e => {
         e.preventDefault();
         const { displayName, email, password, confirmPassword } = this.state;
+        const { signUpStart } = this.props;
 
         if (password !== confirmPassword) return alert("passwords don't mutch");
 
-        try {
-            const { user } = await createUserWithEmailAndPassword(auth, email, password);
-            createUserProfileDocument(user, { displayName });
-            this.setState({ displayName: '', email: '', password: '', confirmPassword: '' });
-        } catch (error) {
-            console.error(error);
-        }
+        signUpStart({ displayName, email, password });
     }
 
     handleChange = ({ target: { name, value } }) => this.setState({ [name]: value });
@@ -74,4 +69,8 @@ class SignIn extends Component {
     }
 };
 
-export default SignIn;
+const mapDispatchToProps = dispatch => ({
+    signUpStart: userCredentials => dispatch(signUpStart(userCredentials))
+})
+
+export default connect(null, mapDispatchToProps)(SignIn);

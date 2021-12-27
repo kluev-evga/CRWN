@@ -20,10 +20,6 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-
-
-
-
 // import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 // import reportWebVitals from './reportWebVitals';
 
