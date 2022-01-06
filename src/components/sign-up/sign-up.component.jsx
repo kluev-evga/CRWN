@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
 import { signUpStart } from '../../redux/user/user.actions';
 import { SignUpContainer } from './sign-up.styles';
 
 
-const SignUp = ({ signUpStart }) => {
+const SignUp = () => {
+    const dispatch = useDispatch();
     const [userCredentials, setUserCredentials] = useState({ displayName: '', email: '', password: '', confirmPassword: '' });
 
     const { displayName, email, password, confirmPassword } = userCredentials;
@@ -14,7 +15,7 @@ const SignUp = ({ signUpStart }) => {
     const handleSubmit = e => {
         e.preventDefault();
         if (password !== confirmPassword) return alert("passwords don't mutch");
-        signUpStart({ displayName, email, password });
+        dispatch(signUpStart({ displayName, email, password }));
     }
 
     const handleChange = ({ target: { name, value } }) => setUserCredentials({ ...userCredentials, [name]: value });
@@ -59,8 +60,4 @@ const SignUp = ({ signUpStart }) => {
     );
 };
 
-const mapDispatchToProps = dispatch => ({
-    signUpStart: userCredentials => dispatch(signUpStart(userCredentials))
-})
-
-export default connect(null, mapDispatchToProps)(SignUp);
+export default SignUp;

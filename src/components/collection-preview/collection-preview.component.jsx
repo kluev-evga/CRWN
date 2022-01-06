@@ -5,7 +5,7 @@ import { CollectionPreviewContainer, Title, Preview } from './collection-preview
 
 const CollectionPreview = ({ title, items, routeName }) => (
     <CollectionPreviewContainer>
-        <Title to={`shop/${routeName}`}>{title}</Title>
+        <Title to={routeName}>{title}</Title>
         <Preview>
             {
                 items

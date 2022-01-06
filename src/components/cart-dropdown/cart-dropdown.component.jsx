@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import CustomButton from '../custom-button/custom-button.component';
 import CartItem from '../cart-item/cart-item.component';
@@ -14,7 +14,7 @@ import { CartdropdownContainer, Items, EmptyMessage } from './cart-dropdown.styl
 const CartDropdown = () => {
     const cartItems = useSelector(selectCartItems);
     const dispatch = useDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     return (
         <CartdropdownContainer>
@@ -27,7 +27,7 @@ const CartDropdown = () => {
             </Items>
             <CustomButton
                 onClick={() => {
-                    history.push('/checkout')
+                    navigate('/checkout', { replace: true });
                     dispatch(toggleCartHidden());
                 }}>
                 GO TO CHECKOUT
